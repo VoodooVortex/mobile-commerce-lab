@@ -1,107 +1,106 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MyEditProfile());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyEditProfile extends StatelessWidget {
+  const MyEditProfile({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My Profile',
+      title: 'Edit Profile',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF039587)),
-        fontFamily: 'Magic Red',
+        // fontFamily: 'Magic Red',
+        textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      home: const MyHomePage(title: 'My Profile'),
+      home: const MyEditProfilePage(title: 'Edit Profile'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class MyEditProfilePage extends StatefulWidget {
+  const MyEditProfilePage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyEditProfilePage> createState() => _MyEditProfileState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _like = 14;
+class _MyEditProfileState extends State<MyEditProfilePage> {
+  int _notiCount = 0;
+  final TextEditingController _nameController = TextEditingController(
+    text: 'Mr. Flutter Dev',
+  );
+  String _position = 'Developer';
+  String _workPreference = 'Office';
+  bool _subscribe = false;
+  final TextEditingController _birthDateController = TextEditingController(
+    text: '22/12/2025',
+  );
 
-  void _incrementLikes() {
+  void _noti() {
     setState(() {
-      _like++;
+      _notiCount++;
     });
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _birthDateController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       backgroundColor: Color(0xFFfff6ff),
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
           IconButton(
-            onPressed: _incrementLikes,
-            icon: const Icon(Icons.favorite, color: Color(0xFF48444e), size: 30),
+            onPressed: _noti,
+            icon: Badge(
+              label: Text('$_notiCount'),
+              isLabelVisible: _notiCount > 0,
+              child: const Icon(
+                Icons.notifications_rounded,
+                color: Color(0xFFFFFFFF),
+                size: 30,
+              ),
+            ),
           ),
         ],
+        actionsPadding: const EdgeInsets.only(right: 8),
       ),
-      body: Center(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 20),
         child: Column(
           children: [
-            const SizedBox(height: 40),
-
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                // border: Border.all(
-                //   color: const Color(0xFFB39DDB),
-                //   width: 4,
-                // ),
-              ),
-              child: const CircleAvatar(
-                radius: 60,
-                // backgroundColor: Color(0xFFB39DDB),
-                backgroundImage: AssetImage('assets/images/66160080.JPG'),
-              ),
+            Image.asset(
+              'assets/images/flutter.png',
+              width: 80,
+              height: 80,
+              fit: BoxFit.cover,
             ),
-
-            const SizedBox(height: 25),
-
-            const Text(
-              'Mr. Flutter Dev',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF272e31),
-              ),
-            ),
-
             const SizedBox(height: 5),
-
-            Text(
-              'Mobile Application Developer',
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFFb7aeb6),
-              ),
+            const Text(
+              'Flutter',
+              style: TextStyle(fontSize: 28, color: Color(0xFF7a737c)),
             ),
-
-            const SizedBox(height: 30),
-
+            const SizedBox(height: 10),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.all(20),
               margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: Color(0xFFe2f1f2),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -111,62 +110,214 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ],
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Likes
-                  Column(
+                  // Full Name
+                  const Text(
+                    'Full Name',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.person),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Position
+                  const Text(
+                    'Position',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    value: _position,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.work),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    items: ['Developer', 'Designer', 'Manager', 'Tester'].map((
+                      String value,
+                    ) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        _position = newValue!;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Work Preference
+                  const Text(
+                    'Work Preference',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  Row(
                     children: [
-                      Text('Likes', style: TextStyle(fontSize: 16, color: Color(0xFF272e31))),
-                      const SizedBox(height: 4),
-                      Text('$_like', style: const TextStyle(fontSize: 18, color: Color(0xFF0d9285), fontWeight: FontWeight.w100)),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _workPreference = 'Office';
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            Radio<String>(
+                              value: 'Office',
+                              groupValue: _workPreference,
+                              onChanged: (value) {
+                                setState(() {
+                                  _workPreference = value!;
+                                });
+                              },
+                            ),
+                            const Text('Office'),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _workPreference = 'Remote';
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            Radio<String>(
+                              value: 'Remote',
+                              groupValue: _workPreference,
+                              onChanged: (value) {
+                                setState(() {
+                                  _workPreference = value!;
+                                });
+                              },
+                            ),
+                            const Text('Remote'),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                  // Followers
-                  Column(
-                    children: [
-                      Text('Followers', style: TextStyle(fontSize: 16, color: Color(0xFF272e31))),
-                      const SizedBox(height: 4),
-                      const Text('1.5k', style: TextStyle(fontSize: 18, color: Color(0xFF272e31), fontWeight: FontWeight.w100)),
-                    ],
+                  const SizedBox(height: 10),
+
+                  // Newsletter
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _subscribe = !_subscribe;
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: _subscribe,
+                          onChanged: (value) {
+                            setState(() {
+                              _subscribe = value!;
+                            });
+                          },
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                'Subscribe to Newsletter',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                'Receive updates via email',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.email, color: Colors.black),
+                      ],
+                    ),
                   ),
-                  // Following
-                  Column(
-                    children: [
-                      Text('Following', style: TextStyle(fontSize: 16, color: Color(0xFF272e31))),
-                      const SizedBox(height: 4),
-                      const Text('300', style: TextStyle(fontSize: 18, color: Color(0xFF272e31), fontWeight: FontWeight.w100)),
-                    ],
+                  const SizedBox(height: 20),
+
+                  // Birth Date
+                  const Text(
+                    'Birth Date',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _birthDateController,
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialEntryMode: DatePickerEntryMode.calendarOnly,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2019),
+                        lastDate: DateTime(2050),
+                      );
+                      if (pickedDate != null) {
+                        setState(() {
+                          _birthDateController.text =
+                              "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+                        });
+                      }
+                    },
+                    decoration: InputDecoration(
+                      suffixIcon: const Icon(Icons.calendar_today),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 12,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Save Changes Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.save),
+                      label: const Text('Save Changes'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        side: const BorderSide(
+                          color: Color(0xFF039587),
+                          width: 2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        foregroundColor: const Color(0xFF6B5B95),
+                      ),
+                    ),
                   ),
                 ],
-              ),
-            ),
-
-            const Spacer(),
-
-            Padding(
-              padding: const EdgeInsets.only(bottom: 80),
-              child: ElevatedButton(
-                onPressed: _incrementLikes,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFfaf1fa),
-                  foregroundColor: Color(0xFF7f71a0),
-                  elevation: 2, // เงา
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24), // ขอบมน
-                  ),
-                ),
-                child: const Text(
-                  'Like +1',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
               ),
             ),
           ],
