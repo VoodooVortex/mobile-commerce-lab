@@ -2,326 +2,357 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  runApp(const MyEditProfile());
+  runApp(const MyPortfolio());
 }
 
-class MyEditProfile extends StatelessWidget {
-  const MyEditProfile({super.key});
+class MyPortfolio extends StatelessWidget {
+  const MyPortfolio({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Edit Profile',
+      title: 'My Portfolio',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF039587)),
-        // fontFamily: 'Magic Red',
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF00BCD4)),
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
-      home: const MyEditProfilePage(title: 'Edit Profile'),
+      home: const MyPortfolioPage(),
     );
   }
 }
 
-class MyEditProfilePage extends StatefulWidget {
-  const MyEditProfilePage({super.key, required this.title});
-
-  final String title;
+class MyPortfolioPage extends StatefulWidget {
+  const MyPortfolioPage({super.key});
 
   @override
-  State<MyEditProfilePage> createState() => _MyEditProfileState();
+  State<MyPortfolioPage> createState() => _MyPortfolioPageState();
 }
 
-class _MyEditProfileState extends State<MyEditProfilePage> {
-  int _notiCount = 0;
-  final TextEditingController _nameController = TextEditingController(
-    text: 'Mr. Flutter Dev',
-  );
-  String _position = 'Developer';
-  String _workPreference = 'Office';
-  bool _subscribe = false;
-  final TextEditingController _birthDateController = TextEditingController(
-    text: '22/12/2025',
-  );
+class _MyPortfolioPageState extends State<MyPortfolioPage> {
+  // Sample data for highlights
+  final List<Map<String, String>> highlights = [
+    {'title': 'Project 1', 'image': 'https://picsum.photos/400/300?random=1'},
+    {'title': 'Project 2', 'image': 'https://picsum.photos/400/300?random=2'},
+    {'title': 'Project 3', 'image': 'https://picsum.photos/400/300?random=3'},
+    {'title': 'Project 4', 'image': 'https://picsum.photos/400/300?random=4'},
+  ];
 
-  void _noti() {
+  // Sample data for gallery
+  final List<String> galleryImages = [
+    'https://picsum.photos/400/400?random=10',
+    'https://picsum.photos/400/400?random=11',
+    'https://picsum.photos/400/400?random=12',
+    'https://picsum.photos/400/400?random=13',
+    'https://picsum.photos/400/400?random=14',
+    'https://picsum.photos/400/400?random=15',
+    'https://picsum.photos/400/400?random=16',
+    'https://picsum.photos/400/400?random=17',
+  ];
+
+  Future<void> _onRefresh() async {
+    // Simulate refresh
+    await Future.delayed(const Duration(seconds: 1));
     setState(() {
-      _notiCount++;
+      // Refresh data here
     });
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _birthDateController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFfff6ff),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-        actions: [
-          IconButton(
-            onPressed: _noti,
-            icon: Badge(
-              label: Text('$_notiCount'),
-              isLabelVisible: _notiCount > 0,
-              child: const Icon(
-                Icons.notifications_rounded,
-                color: Color(0xFFFFFFFF),
-                size: 30,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          'My Portfolio',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+            fontSize: 18,
+          ),
+        ),
+      ),
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        color: const Color(0xFF00BCD4),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Profile Section
+              _buildProfileSection(),
+
+              const SizedBox(height: 24),
+
+              // Highlights Section
+              _buildHighlightsSection(),
+
+              const SizedBox(height: 24),
+
+              // Gallery Section
+              _buildGallerySection(),
+
+              const SizedBox(height: 24),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileSection() {
+    return Center(
+      child: Column(
+        children: [
+          const SizedBox(height: 16),
+          // Avatar with circular cyan background
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  const Color(0xFF00BCD4).withOpacity(0.3),
+                  const Color(0xFF00BCD4).withOpacity(0.6),
+                ],
+              ),
+            ),
+            child: Center(
+              child: Image.network(
+                'https://storage.googleapis.com/cms-storage-bucket/4fd0db61df0567c0f352.png',
+                width: 60,
+                height: 60,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.flutter_dash,
+                    size: 60,
+                    color: Color(0xFF00BCD4),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Name
+          const Text(
+            'Mr. Flutter Dev',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 4),
+          // Subtitle
+          Text(
+            'Creative Designer',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[500],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHighlightsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Highlights',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 160,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: highlights.length,
+            itemBuilder: (context, index) {
+              return _buildHighlightCard(highlights[index], index);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHighlightCard(Map<String, String> project, int index) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = screenWidth * 0.75;
+    return Container(
+      width: cardWidth,
+      margin: const EdgeInsets.only(right: 12),
+      child: Stack(
+        children: [
+          // Image
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              width: cardWidth,
+              height: 200,
+              color: Colors.grey[300],
+              child: Image.network(
+                project['image']!,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: Icon(
+                        Icons.image,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          // Title overlay at bottom-left
+          Positioned(
+            left: 8,
+            bottom: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                project['title']!,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
         ],
-        actionsPadding: const EdgeInsets.only(right: 8),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          children: [
-            Image.asset(
-              'assets/images/flutter.png',
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
+    );
+  }
+
+  Widget _buildGallerySection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Gallery',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
-            const SizedBox(height: 5),
-            const Text(
-              'Flutter',
-              style: TextStyle(fontSize: 28, color: Color(0xFF7a737c)),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.all(20),
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Full Name
-                  const Text(
-                    'Full Name',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.person),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Position
-                  const Text(
-                    'Position',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    value: _position,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.work),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    items: ['Developer', 'Designer', 'Manager', 'Tester'].map((
-                      String value,
-                    ) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        _position = newValue!;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Work Preference
-                  const Text(
-                    'Work Preference',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _workPreference = 'Office';
-                          });
-                        },
-                        child: Row(
-                          children: [
-                            Radio<String>(
-                              value: 'Office',
-                              groupValue: _workPreference,
-                              onChanged: (value) {
-                                setState(() {
-                                  _workPreference = value!;
-                                });
-                              },
-                            ),
-                            const Text('Office'),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _workPreference = 'Remote';
-                          });
-                        },
-                        child: Row(
-                          children: [
-                            Radio<String>(
-                              value: 'Remote',
-                              groupValue: _workPreference,
-                              onChanged: (value) {
-                                setState(() {
-                                  _workPreference = value!;
-                                });
-                              },
-                            ),
-                            const Text('Remote'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Newsletter
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _subscribe = !_subscribe;
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        Checkbox(
-                          value: _subscribe,
-                          onChanged: (value) {
-                            setState(() {
-                              _subscribe = value!;
-                            });
-                          },
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'Subscribe to Newsletter',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(
-                                'Receive updates via email',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Icon(Icons.email, color: Colors.black),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Birth Date
-                  const Text(
-                    'Birth Date',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _birthDateController,
-                    readOnly: true,
-                    onTap: () async {
-                      DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialEntryMode: DatePickerEntryMode.calendarOnly,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2019),
-                        lastDate: DateTime(2050),
-                      );
-                      if (pickedDate != null) {
-                        setState(() {
-                          _birthDateController.text =
-                              "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
-                        });
-                      }
-                    },
-                    decoration: InputDecoration(
-                      suffixIcon: const Icon(Icons.calendar_today),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 12,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-
-                  // Save Changes Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.save),
-                      label: const Text('Save Changes'),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        side: const BorderSide(
-                          color: Color(0xFF039587),
-                          width: 2,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        foregroundColor: const Color(0xFF6B5B95),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 1,
+            ),
+            itemCount: galleryImages.length,
+            itemBuilder: (context, index) {
+              return _buildGalleryItem(galleryImages[index]);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGalleryItem(String imagePath) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Container(
+            color: Colors.grey[300],
+            child: Image.network(
+              imagePath,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: Colors.grey[300],
+                  child: const Center(
+                    child: Icon(
+                      Icons.image,
+                      size: 30,
+                      color: Colors.grey,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          // Center icon overlay
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.image,
+                size: 24,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
